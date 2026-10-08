@@ -39,17 +39,19 @@ This is not just a shell script that prints metrics. It demonstrates practical p
 
 ## How it works
 
-```text
-/proc/stat       ─┐
-/proc/meminfo    ─┼─> threshold checks ──> cooldown ──> optional JSON webhook
-root filesystem ──┘
+┌─────────────────┐
+  │   /proc/stat    │──┐
+  │  /proc/meminfo  │──┼──> Threshold Checks ──> Cooldown ──> JSON Webhook
+  │ Root Filesystem │──┘
+  └─────────────────┘
+  ┌─────────────────┐
+  │    systemctl    │─────> Inactive Unit   ──> Dry-run / Restart ──> Event Log
+  └─────────────────┘
+  ┌─────────────────┐
+  │   journalctl    │─────> SSH Failures    ──> Threshold ──────────> Security Alert
+  └─────────────────┘
 
-systemctl ────────> inactive service ──> dry-run or restart ──> event log
-
-journalctl ───────> SSH failure count ──> threshold ──────────> security alert
-
-all checks ───────> flock-protected loop ──> /var/log/sysmon-sentinel.log
-```
+  All Checks ─────────────> flock Execution ──> /var/log/sysmon-sentinel.log
 
 The monitor is intentionally conservative. It does **not** kill arbitrary processes, change firewall rules, modify SSH configuration, or pretend to replace a full observability platform. It automates a narrow and useful first response while leaving diagnosis and policy decisions visible to the operator.
 
