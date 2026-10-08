@@ -29,7 +29,6 @@ Traditional monitoring platforms can solve these problems, but they may be exces
 
 ## Architecture
 
-The following diagram uses GitHub-supported Mermaid syntax and renders directly on the repository page.
 
 ```mermaid
 flowchart TD
