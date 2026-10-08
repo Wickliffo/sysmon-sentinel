@@ -39,19 +39,20 @@ This is not just a shell script that prints metrics. It demonstrates practical p
 
 ## How it works
 
-┌─────────────────┐
-  │   /proc/stat    │──┐
-  │  /proc/meminfo  │──┼──> Threshold Checks ──> Cooldown ──> JSON Webhook
-  │ Root Filesystem │──┘
-  └─────────────────┘
-  ┌─────────────────┐
-  │    systemctl    │─────> Inactive Unit   ──> Dry-run / Restart ──> Event Log
-  └─────────────────┘
-  ┌─────────────────┐
-  │   journalctl    │─────> SSH Failures    ──> Threshold ──────────> Security Alert
-  └─────────────────┘
+```mermaid
+graph TD
+    subgraph Inputs["System Metrics & Logs"]
+        A["/proc/stat<br/>/proc/meminfo<br/>Root Filesystem"]
+        B["systemctl"]
+        C["journalctl"]
+    end
 
-  All Checks ─────────────> flock Execution ──> /var/log/sysmon-sentinel.log
+    A --> D["Threshold Checks"] --> E["Cooldown State"] --> F["JSON Webhook"]
+    B --> G["Inactive Unit Detection"] --> H["Dry-run / Auto-Restart"] --> I["Event Log"]
+    C --> J["SSH Failure Counter"] --> K["Security Threshold"] --> L["Security Alert"]
+
+    Inputs --> M["flock Execution Loop"] --> N["/var/log/sysmon-sentinel.log"]
+  
 
 The monitor is intentionally conservative. It does **not** kill arbitrary processes, change firewall rules, modify SSH configuration, or pretend to replace a full observability platform. It automates a narrow and useful first response while leaving diagnosis and policy decisions visible to the operator.
 
