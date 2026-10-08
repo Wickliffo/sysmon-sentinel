@@ -1,0 +1,20 @@
+[Unit]
+Description=sysmon-sentinel lightweight host monitor
+Documentation=https://github.com/Wickliffo/sysmon-sentinel
+After=local-fs.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/sbin/sysmon-sentinel --config /etc/sysmon-sentinel/sysmon-sentinel.conf
+EnvironmentFile=-/etc/sysmon-sentinel/sysmon-sentinel.env
+Restart=on-failure
+RestartSec=10s
+User=root
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
+ReadWritePaths=/var/log /run/lock
+
+[Install]
+WantedBy=multi-user.target
