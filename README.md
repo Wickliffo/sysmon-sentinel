@@ -39,6 +39,17 @@ This is not just a shell script that prints metrics. It demonstrates practical p
 
 ## How it works
 
+The issue with ASCII box-drawing characters (like `┌`, `─`, `┤`) is that GitHub's editor font and variable-width text rendering often misalign or disconnect them.
+
+To fix this, we have two reliable options:
+
+---
+
+### Option 1: Native GitHub Mermaid Diagram (Recommended)
+
+GitHub natively renders **Mermaid syntax** into SVG diagrams. Replace lines 42–55 in your `README.md` with this block:
+
+```markdown
 ```mermaid
 graph TD
     subgraph Inputs["System Metrics & Logs"]
@@ -52,6 +63,32 @@ graph TD
     C --> J["SSH Failure Counter"] --> K["Security Threshold"] --> L["Security Alert"]
 
     Inputs --> M["flock Execution Loop"] --> N["/var/log/sysmon-sentinel.log"]
+
+```
+
+```
+
+---
+
+### Option 2: Clean Standard ASCII (Guaranteed Monospace Alignment)
+If you prefer pure text without Mermaid rendering, use standard ASCII characters (`+`, `-`, `|`). These align reliably across all text editors and GitHub previews:
+
+```text
+  +-----------------+
+  |   /proc/stat    |--+
+  |  /proc/meminfo  |  |--> Threshold Checks --> Cooldown --> JSON Webhook
+  | Root Filesystem |--+
+  +-----------------+
+  +-----------------+
+  |    systemctl    |-----> Inactive Unit   ---> Dry-run / Restart --> Event Log
+  +-----------------+
+  +-----------------+
+  |   journalctl    |-----> SSH Failures    ---> Threshold ----------> Security Alert
+  +-----------------+
+
+  All Checks ---------------> flock Execution ---> /var/log/sysmon-sentinel.log
+
+```
   
 
 The monitor is intentionally conservative. It does **not** kill arbitrary processes, change firewall rules, modify SSH configuration, or pretend to replace a full observability platform. It automates a narrow and useful first response while leaving diagnosis and policy decisions visible to the operator.
