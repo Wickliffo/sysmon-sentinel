@@ -1,0 +1,11 @@
+/var/log/sysmon-sentinel.log {
+    weekly
+    rotate 12
+    size 10M
+    missingok
+    notifempty
+    compress
+    delaycompress
+    copytruncate
+    create 0640 root adm
+}
